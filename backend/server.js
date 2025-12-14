@@ -28,15 +28,6 @@ app.use(passport.session());
 app.use("/api/auth",authRouter);
 app.use('/api/message',messageRouter);
 
-const __dirname = path.resolve();
-
-if(process.env.NODE_ENV === "production"){
-    app.use(express.static(path.join(__dirname,"../frontend/dist")));
-
-    app.get('*', (req,res)=>{
-        res.sendFile(path.join(__dirname,"../frontend","dist","index.html"));
-    })
-}
 
 app.listen(PORT, ()=>{
     console.log('server is running on http://localhost:3000');
