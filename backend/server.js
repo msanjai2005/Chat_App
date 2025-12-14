@@ -6,6 +6,7 @@ import messageRouter from './routes/message.router.js'
 import cookieParser from 'cookie-parser';
 import passport from './config/passport.js';
 import session from "express-session";
+import path from 'path';
 
 const app = express();
 await connectBD();
@@ -27,9 +28,15 @@ app.use(passport.session());
 app.use("/api/auth",authRouter);
 app.use('/api/message',messageRouter);
 
-app.get('/',(req,res)=>{
-    res.send("Api is working...");
-})
+const __dirname = path.resolve();
+
+if(process.env.NODE_ENV === "production"){
+    app.use(express.static(path.join(__dirname,"../frontend/dist")));
+
+    app.get('*', (req,res)=>{
+        res.sendFile(path.join(__dirname,"../frontend","dist","index.html"));
+    })
+}
 
 app.listen(PORT, ()=>{
     console.log('server is running on http://localhost:3000');
