@@ -11,11 +11,9 @@ export const VerifyToken = async(req,res,next)=>{
         if(!decoded){
             return res.status(401).json({success:false,message:"UnAutherized user - Invalid token"});
         }
-        console.log(decoded);
         const user = await User.findById(decoded.id).select("-password");
-
         if(!user){
-            return res.status(404).json({success:false,message:"User Not Found"});
+            return res.status(404).json({success:false,message:"User Not Found - token"});
         }
         req.user = user;
         next();
