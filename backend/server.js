@@ -28,7 +28,6 @@ app.use(passport.session());
 app.use("/api/auth",authRouter);
 app.use('/api/message',messageRouter);
 
-
 app.listen(PORT, ()=>{
     console.log('server is running on http://localhost:3000');
 })

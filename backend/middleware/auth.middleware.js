@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
+import { User } from '../models/user.model.js';
 
-export const VerifyToken = (req,res,next)=>{
+export const VerifyToken = async(req,res,next)=>{
     const token = req.cookies.token;
     if(!token){
         return res.status(401).json({success:false,message:"UnAutherized user - no token available"});
@@ -11,14 +12,19 @@ export const VerifyToken = (req,res,next)=>{
             return res.status(401).json({success:false,message:"UnAutherized user - Invalid token"});
         }
         console.log(decoded);
-        req.userId = decoded.id;
+        const user = await User.findById(decoded.id).select("-password");
+
+        if(!user){
+            return res.status(404).json({success:false,message:"User Not Found"});
+        }
+        req.user = user;
         next();
     } catch (error) {
         console.log("Error in Verify Token");
         console.log(error.message);
-         return res.status(401).json({
+         return res.status(500).json({
             success: false,
-            message: "Unauthorized user - invalid token"
+            message: "server error"
         });
     }
 }

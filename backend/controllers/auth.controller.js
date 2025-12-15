@@ -1,12 +1,22 @@
+import { sendWelcomeEmail } from "../emails/emailHandlers.js";
 import { User } from "../models/user.model.js";
 import { getTokenAndSetcookies } from "../utils/getTokenAndSetcookies.js";
 import { comparePassword, hashedPassword } from "../utils/passwordFN.js";
+import 'dotenv/config';
+import cloudinary from '../config/cloudinary.js';
 
 export const register = async (req, res) => {
   const { Name, username, email, password } = req.body;
 
   if (!Name || !username || !email || !password) {
     return res.status(400).json({ success: false, message: "Missing Details" });
+  }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid email format",
+    });
   }
   try {
     const Existuser = await User.findOne({ email });
@@ -33,6 +43,8 @@ export const register = async (req, res) => {
     });
     await user.save();
     await getTokenAndSetcookies(res, user._id);
+
+    await sendWelcomeEmail(user.email,user.name,process.env.FRONTEND_URL);
 
     console.log(`User successfilly created ${user}`);
     return res.status(201).json({
@@ -135,3 +147,22 @@ export const googleLogin = async (req, res) => {
     );
   }
 };
+
+export const updateProfile = async(req,res)=>{
+  try {
+    const { picture } = req.body;
+    if(!picture) return res.status(404).json({success:false, message:"profile picture is required."});
+
+    const userId = req.user._id;
+
+    const uploadResponce = await cloudinary.uploader.upload(picture);
+
+    const updatedUser = await User.findByIdAndUpdate(userId,{picture:uploadResponce.secure_url},{new:true});
+
+    res.status(200).json({success:true,user:updatedUser});
+
+  } catch (error) {
+    console.log("Error in update profile : ",error.message);
+    return res.status(500).json({success:false, message:error.message});
+  }
+}

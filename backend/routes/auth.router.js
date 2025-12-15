@@ -5,8 +5,9 @@ import {
   login,
   logout,
   register,
+  updateProfile,
 } from "../controllers/auth.controller.js";
-import { VerifyToken } from "../middleware/VerifyToken.middleware.js";
+import { VerifyToken } from "../middleware/auth.middleware.js";
 import passport from "passport";
 
 const router = express.Router();
@@ -26,5 +27,7 @@ router.get(
   passport.authenticate("google", { session: false }),
   googleLogin
 );
+
+router.put('/update',VerifyToken,updateProfile);
 
 export default router;
