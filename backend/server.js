@@ -6,7 +6,7 @@ import messageRouter from './routes/message.router.js'
 import cookieParser from 'cookie-parser';
 import passport from './config/passport.js';
 import session from "express-session";
-import path from 'path';
+import limiter from './config/rateLimiting.js';
 
 const app = express();
 await connectBD();
@@ -16,6 +16,7 @@ const PORT = 3000;
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
+app.use(limiter);
 
 app.use(session({
   secret: process.env.JWT_SECRET,
@@ -26,7 +27,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/api/auth",authRouter);
-app.use('/api/message',messageRouter);
+app.use('/api/messages',messageRouter);
 
 app.listen(PORT, ()=>{
     console.log('server is running on http://localhost:3000');

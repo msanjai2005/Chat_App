@@ -44,7 +44,7 @@ export const register = async (req, res) => {
     await user.save();
     await getTokenAndSetcookies(res, user._id);
 
-    await sendWelcomeEmail(user.email,user.name,process.env.FRONTEND_URL);
+    // await sendWelcomeEmail(user.email,user.name,process.env.FRONTEND_URL);
 
     console.log(`User successfilly created ${user}`);
     return res.status(201).json({

@@ -24,16 +24,11 @@ const userSchema = new mongoose.Schema(
       default:""
     },
     googleId: {
-      type: String,
-      unique: true,
+      type: String
     },
     lastLogin: {
       type: Date,
       default: Date.now(),
-    },
-    isVerified: {
-      type: Boolean,
-      default: false,
     }
   },
   { timestamps: true }
