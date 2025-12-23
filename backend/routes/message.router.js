@@ -1,13 +1,15 @@
 import express from 'express';
-import { getAllChats, getAllContects, getMessagesByUserId, sendMessage } from '../controllers/message.controller.js';
+import { getChatPartners, getAllContects, getMessagesByUserId, sendMessage } from '../controllers/message.controller.js';
 import { VerifyToken } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
-router.get('/contects',VerifyToken,getAllContects);
-router.get('/chats',VerifyToken,getAllChats);
-router.get('/:id',VerifyToken,getMessagesByUserId);
+router.use(VerifyToken);
 
-router.post('/send/:id',VerifyToken,sendMessage);
+router.get('/contacts',getAllContects);
+router.get('/chats',getChatPartners);
+router.get('/:id',getMessagesByUserId);
+
+router.post('/send/:id',sendMessage);
 
 export default router;

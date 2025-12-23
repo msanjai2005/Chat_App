@@ -4,12 +4,7 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required:true
-    },
-    username: {
-      type: String,
-      unique: true,
-      required:true
+      required: true,
     },
     email: {
       type: String,
@@ -21,15 +16,8 @@ const userSchema = new mongoose.Schema(
     },
     picture: {
       type: String,
-      default:""
+      default: "",
     },
-    googleId: {
-      type: String
-    },
-    lastLogin: {
-      type: Date,
-      default: Date.now(),
-    }
   },
   { timestamps: true }
 );

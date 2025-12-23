@@ -1,4 +1,3 @@
-import { sendWelcomeEmail } from "../emails/emailHandlers.js";
 import { User } from "../models/user.model.js";
 import { getTokenAndSetcookies } from "../utils/getTokenAndSetcookies.js";
 import { comparePassword, hashedPassword } from "../utils/passwordFN.js";
@@ -6,9 +5,12 @@ import 'dotenv/config';
 import cloudinary from '../config/cloudinary.js';
 
 export const register = async (req, res) => {
-  const { Name, username, email, password } = req.body;
+  const { Name, email, password } = req.body;
 
-  if (!Name || !username || !email || !password) {
+  if (!Name || !email || !password) {
+    console.log("Name :",Name);
+    console.log("email :",email);
+    console.log("password :",password);
     return res.status(400).json({ success: false, message: "Missing Details" });
   }
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -25,19 +27,11 @@ export const register = async (req, res) => {
         .status(400)
         .json({ success: false, message: "User already Exists" });
     }
-
-    const existName = await User.findOne({ username });
-    if (existName) {
-      return res
-        .status(400)
-        .json({ success: false, message: "try different username" });
-    }
-
+    
     const hashPassword = await hashedPassword(password);
 
     const user = new User({
       name: Name,
-      username,
       email,
       password: hashPassword,
     });
@@ -56,7 +50,7 @@ export const register = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log("error in Register");
+    console.log("error in Register",error.message);
     return res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -119,32 +113,16 @@ export const logout = async (req, res) => {
 
 export const checkIsAuth = async (req, res) => {
   try {
-    const user = await User.findById(req.userId).select("-password");
-
+    const user = await User.findById(req.user._id).select("-password");
     if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User Not Found" });
     }
-    console.log(user.name);
     return res.status(200).json({ success: true, user });
   } catch (error) {
     console.log("error in is auth");
     res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-export const googleLogin = async (req, res) => {
-  try {
-    await getTokenAndSetcookies(res, req.user._id);
-
-    return res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
-  } catch (error) {
-    console.log("google login error");
-    console.log(error.message);
-    return res.redirect(
-      `${process.env.FRONTEND_URL}/login?error=google_failed`
-    );
   }
 };
 
