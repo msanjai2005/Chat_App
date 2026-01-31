@@ -6,7 +6,7 @@ import { io } from "socket.io-client";
 export const AppContext = createContext();
 
 export const AppContextProvider = (props) => {
-  const backendUrl = "http://localhost:3000/api";
+  const backendUrl = "https://chat-app-4qpa.onrender.com/api";
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
