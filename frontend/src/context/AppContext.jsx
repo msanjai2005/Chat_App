@@ -68,7 +68,7 @@ export const AppContextProvider = (props) => {
   const connectSocket = () => {
     if (!user || socket?.connected) return;
 
-    const newSocket = io("http://localhost:3000", {
+    const newSocket = io("https://chat-app-4qpa.onrender.com", {
       withCredentials: true,
     });
 
